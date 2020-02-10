@@ -335,6 +335,26 @@ module Environment =
 
     let parse environmentValue = environmentValue |> FullyQualified.parse <!> Environment.FullyQualified
 
+type EnvironmentDefinition =
+    | ByProxy of Proxy
+    | ByEnvironment of Environment
+
+[<RequireQualifiedAccess>]
+module EnvironmentDefinition =
+    let Current = "&current" |> Proxy.create |> Result.orFail
+
+    let environment = function
+        | ByProxy proxy -> failwithf "Environment definition is set as proxy %A.\nYou have to resolve the proxy first." (proxy |> Proxy.format)
+        | ByEnvironment environment -> environment
+
+    let format = function
+        | ByProxy proxy -> proxy |> Proxy.format
+        | ByEnvironment environment -> environment |> Environment.toAlias |> Alias.value
+
+    let resolve (key, (environment: Environment)) = function
+        | ByEnvironment environment -> Ok environment
+        | ByProxy proxy -> proxy |> Proxy.resolve (key => environment)
+
 // ==== /Env ====
 
 // ==== Env pattern ====
