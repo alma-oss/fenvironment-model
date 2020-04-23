@@ -2,9 +2,10 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Add `internal` space
 
 ## 1.2.0 - 2020-04-22
-- Add `Ict` space
+- Add `ict` space
 
 ## 1.1.0 - 2020-02-10
 - Add tests

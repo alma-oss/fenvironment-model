@@ -85,6 +85,7 @@ type Space =
     | Rad
     | Bi
     | Ict
+    | Internal
 
 [<RequireQualifiedAccess>]
 module Space =
@@ -94,6 +95,7 @@ module Space =
         | Space.Rad -> "rad"
         | Space.Bi -> "bi"
         | Space.Ict -> "ict"
+        | Space.Internal -> "internal"
 
     let format = function
         | Space.Business -> "business"
@@ -101,6 +103,7 @@ module Space =
         | Space.Rad -> "rad"
         | Space.Bi -> "bi"
         | Space.Ict -> "ict"
+        | Space.Internal -> "internal"
 
     let parse = function
         | "" | "business" | "-business" -> Ok Space.Business
@@ -108,6 +111,7 @@ module Space =
         | "rad" | "-rad" -> Ok Space.Rad
         | "bi" | "-bi" -> Ok Space.Bi
         | "ict" | "-ict" -> Ok Space.Ict
+        | "internal" | "-internal" -> Ok Space.Internal
         | space -> Error (UnknownSpace space)
 
 [<RequireQualifiedAccess>]
