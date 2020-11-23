@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- [**BC**] Change namespace
+- Update dependencies
 
 ## 1.3.0 - 2020-04-23
 - Add `internal` space
