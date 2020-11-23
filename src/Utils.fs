@@ -1,4 +1,4 @@
-namespace EnvironmentModel
+namespace Lmc.EnvironmentModel
 
 [<AutoOpen>]
 module private Utils =

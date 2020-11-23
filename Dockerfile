@@ -1,23 +1,24 @@
 FROM dcreg.service.consul/dev/development-dotnet-core-sdk-common:3.1
 
 # build scripts
-COPY ./fake.sh /environment-model/
-COPY ./build.fsx /environment-model/
-COPY ./paket.dependencies /environment-model/
-COPY ./paket.references /environment-model/
-COPY ./paket.lock /environment-model/
+COPY ./build.sh /lib/
+COPY ./build.fsx /lib/
+COPY ./paket.dependencies /lib/
+COPY ./paket.references /lib/
+COPY ./paket.lock /lib/
 
 # sources
-COPY ./EnvironmentModel.fsproj /environment-model/
-COPY ./src /environment-model/src
+COPY ./EnvironmentModel.fsproj /lib/
+COPY ./src /lib/src
 
 # others
-COPY ./.git /environment-model/.git
-COPY ./CHANGELOG.md /environment-model/
+COPY ./.git /lib/.git
+COPY ./.config /lib/.config
+COPY ./CHANGELOG.md /lib/
 
-WORKDIR /environment-model
+WORKDIR /lib
 
 RUN \
-    ./fake.sh build target Build no-clean
+    ./build.sh -t Build no-clean
 
-CMD ["./fake.sh", "build", "target", "Tests", "no-clean"]
+CMD ["./build.sh", "-t", "Tests", "no-clean"]
