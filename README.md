@@ -3,6 +3,22 @@ Environment Model
 
 > Library which contains a Model types and basic modules for Environment Definition and Deployment.
 
+## Install
+
+Add following into `paket.dependencies`
+```
+git ssh://git@bitbucket.lmc.cz:7999/archi/nuget-server.git master Packages: /nuget/
+# LMC Nuget dependencies:
+nuget Lmc.EnvironmentModel
+```
+
+Add following into `paket.references`
+```
+Lmc.EnvironmentModel
+```
+
+**Note**: You can also use this library in a Fable project.
+
 ## Environment
 
 ### Tier
