@@ -2,6 +2,9 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Rename `Lmc.ServiceIdentification.fsproj` back to `ServiceIdentification.fsproj` to match old library
+
+## 3.1.0 - 2021-02-09
 - Allow this library in Fable project
 
 ## 3.0.0 - 2020-11-23
