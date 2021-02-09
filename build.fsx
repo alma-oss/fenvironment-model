@@ -14,7 +14,7 @@ type ToolDir =
     | Local of string
 
 // ========================================================================================================
-// === F# / Library fake build ==================================================================== 1.1.0 =
+// === F# / Fable Library fake build ============================================================== 1.3.0 =
 // --------------------------------------------------------------------------------------------------------
 // Options:
 //  - no-clean   - disables clean of dirs in the first step (required on CI)
@@ -31,7 +31,7 @@ type ToolDir =
 // 1. Information about the project to be used at NuGet and in AssemblyInfo files and other FAKE configuration
 // --------------------------------------------------------------------------------------------------------
 
-let project = "EnvironmentModel"
+let project = "Lmc.EnvironmentModel"
 let summary = "Library which contains a Model types and basic modules for Environment Definition and Deployment."
 
 let release = ReleaseNotes.parse (System.IO.File.ReadAllLines "CHANGELOG.md" |> Seq.filter ((<>) "## Unreleased"))
@@ -143,8 +143,8 @@ Target.create "AssemblyInfo" (fun _ ->
             (getAssemblyInfoAttributes projectName)
         )
 
-    !! "**/*.*proj"
-    -- "example/**/*.*proj"
+    !! "src/**/*.fsproj"
+    ++ "tests/**/*.fsproj"
     |> Seq.map getProjectDetails
     |> Seq.iter (fun (projFileName, _, folderName, attributes) ->
         match projFileName with
@@ -154,8 +154,8 @@ Target.create "AssemblyInfo" (fun _ ->
 )
 
 Target.create "Build" (fun _ ->
-    !! "**/*.*proj"
-    -- "example/**/*.*proj"
+    !! "src/**/*.fsproj"
+    ++ "tests/**/*.fsproj"
     |> Seq.iter (DotNet.build id)
 )
 
@@ -175,8 +175,8 @@ Target.create "Lint" <| skipOn "no-lint" (fun _ ->
         |> List.rev
         |> check
 
-    !! "**/*.fsproj"
-    -- "example/**/*.*proj"
+    !! "src/**/*.fsproj"
+    ++ "tests/**/*.fsproj"
     |> Seq.map (fun fsproj ->
         match toolsDir with
         | Global ->
@@ -193,13 +193,13 @@ Target.create "Lint" <| skipOn "no-lint" (fun _ ->
 )
 
 Target.create "Tests" (fun _ ->
-    if !! "tests/*.fsproj" |> Seq.isEmpty
+    if !! "tests/**/*.fsproj" |> Seq.isEmpty
     then Trace.tracefn "There are no tests yet."
     else DotnetCore.runOrFail "run" "tests"
 )
 
 Target.create "Release" (fun _ ->
-    DotnetCore.runInRootOrFail "pack"
+    DotnetCore.runOrFail "pack" ("src" </> project)
 
     Directory.ensure "release"
 
