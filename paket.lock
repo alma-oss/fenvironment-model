@@ -3,13 +3,13 @@ NUGET
   remote: https://api.nuget.org/v3/index.json
     FSharp.Core (5.0)
   remote: paket-files/git_bitbucket.lmc.cz7999/archi/nuget-server/nuget
-    Lmc.ErrorHandling (4.2.0)
+    Lmc.ErrorHandling (4.2.1)
       FSharp.Core (>= 5.0)
-    Lmc.ServiceIdentification (5.1.0)
+    Lmc.ServiceIdentification (5.1.1)
       FSharp.Core (>= 5.0)
 GIT
   remote: ssh://git@bitbucket.lmc.cz:7999/archi/nuget-server.git
-     (bcba90550346978eeea15654acfacebacf00e9ad)
+     (4f30b86d24ddd136a6014a7a0e81da19d34d2813)
       path: /nuget/
 GROUP Build
 STORAGE: NONE

@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../src/Lmc.EnvironmentModel/Lmc.EnvironmentModel.fsproj">
-      <Name>Lmc.EnvironmentModel.fsproj</Name>
+    <ProjectReference Include="../src/Lmc.EnvironmentModel/EnvironmentModel.fsproj">
+      <Name>EnvironmentModel.fsproj</Name>
     </ProjectReference>
   </ItemGroup>
 
