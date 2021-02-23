@@ -414,6 +414,51 @@ module EnvironmentPattern =
                 environment.Space |> EnvironmentPatternSpace.value
             )
 
+        /// Example: devX-services, devX
+        let private (|TierAnySpace|_|) = function
+            | Regex (matchEnvWith MatchExactTier MatchAnyNumber MatchExactSpace) [ t; s ] -> Some (t, s)
+            | _ -> None
+
+        /// Example: *X-services, *X
+        let private (|AnyAnySpace|_|) = function
+            | Regex (matchEnvWith MatchAnyTier MatchAnyNumber MatchExactSpace) [ s ] -> Some s
+            | _ -> None
+
+        /// Example: devX-*
+        let private (|TierAnyAny|_|) = function
+            | Regex (matchEnvWith MatchExactTier MatchAnyNumber MatchAnySpace) [ t ] -> Some t
+            | _ -> None
+
+        /// Example: *41-services
+        let private (|AnyNumberSpace|_|) = function
+            | Regex (matchEnvWith MatchAnyTier MatchExactNumber MatchExactSpace) [ n; s ] ->  Some (n, s)
+            | _ -> None
+
+        /// Example: dev42-*
+        let private (|TierNumberAny|_|) = function
+            | Regex (matchEnvWith MatchExactTier MatchExactNumber MatchAnySpace) [ t; n ] -> Some (t, n)
+            | _ -> None
+
+        /// Example: *42-*
+        let private (|AnyNumberAny|_|) = function
+            | Regex (matchEnvWith MatchAnyTier MatchExactNumber MatchAnySpace) [ n ] -> Some n
+            | _ -> None
+
+        /// Example: dev-*
+        let private (|TierNoneSpace|_|) = function
+            | Regex (matchEnvWith MatchExactTier MatchWithoutNumber MatchAnySpace) [ t ] -> Some t
+            | _ -> None
+
+        /// Example: *-services
+        let private (|AnyNoneSpace|_|) = function
+            | Regex (matchEnvWith MatchAnyTier MatchWithoutNumber MatchExactSpace) [ s ] -> Some s
+            | _ -> None
+
+        /// Example: \*-*
+        let private (|AnyAnyAny|_|) = function
+            | Regex (matchEnvWith MatchAnyTier MatchWithoutNumber MatchAnySpace) [] -> Some AnyAnyAny
+            | _ -> None
+
         let parse: string -> Result<FullyQualifiedEnvironmentPattern, EnvironmentPatternError> =
             fun alias ->
                 match alias |> Environment.FullyQualified.parse with
@@ -432,7 +477,7 @@ module EnvironmentPattern =
                                 Number = AnyNumber
                                 Space = AnySpace
                             }
-                        | Regex (matchEnvWith MatchExactTier MatchAnyNumber MatchExactSpace) [ t; s ] -> // devX-services, devX
+                        | TierAnySpace (t, s) ->
                             let! space = Space.parse s <@> EnvironmentPatternError.SpaceError
                             let! tier = Tier.parse t <@> EnvironmentPatternError.TierError
 
@@ -441,7 +486,7 @@ module EnvironmentPattern =
                                 Number = AnyNumber
                                 Space = ExactSpace space
                             }
-                        | Regex (matchEnvWith MatchAnyTier MatchAnyNumber MatchExactSpace) [ s ] -> // *X-services, *X
+                        | AnyAnySpace s ->
                             let! space = Space.parse s <@> EnvironmentPatternError.SpaceError
 
                             return {
@@ -449,7 +494,7 @@ module EnvironmentPattern =
                                 Number = AnyNumber
                                 Space = ExactSpace space
                             }
-                        | Regex (matchEnvWith MatchExactTier MatchAnyNumber MatchAnySpace) [ t ] -> // devX-*
+                        | TierAnyAny t ->
                             let! tier = Tier.parse t <@> EnvironmentPatternError.TierError
 
                             return {
@@ -457,7 +502,7 @@ module EnvironmentPattern =
                                 Number = AnyNumber
                                 Space = AnySpace
                             }
-                        | Regex (matchEnvWith MatchAnyTier MatchExactNumber MatchExactSpace) [ n; s ] ->  // *41-services
+                        | AnyNumberSpace (n, s) ->
                             let! space = Space.parse s <@> EnvironmentPatternError.SpaceError
 
                             return {
@@ -465,7 +510,7 @@ module EnvironmentPattern =
                                 Number = ExactNumber (Number (n |> int))
                                 Space = ExactSpace space
                             }
-                        | Regex (matchEnvWith MatchExactTier MatchExactNumber MatchAnySpace) [ t; n ] ->  // dev42-*
+                        | TierNumberAny (t, n) ->
                             let! tier = Tier.parse t <@> EnvironmentPatternError.TierError
 
                             return {
@@ -473,13 +518,13 @@ module EnvironmentPattern =
                                 Number = ExactNumber (Number (n |> int))
                                 Space = AnySpace
                             }
-                        | Regex (matchEnvWith MatchAnyTier MatchExactNumber MatchAnySpace) [ n ] ->  // *42-*
+                        | AnyNumberAny n ->
                             return {
                                 Tier = AnyTier
                                 Number = ExactNumber (Number (n |> int))
                                 Space = AnySpace
                             }
-                        | Regex (matchEnvWith MatchExactTier MatchWithoutNumber MatchAnySpace) [ t ] ->  // dev-*
+                        | TierNoneSpace t ->
                             let! tier = Tier.parse t <@> EnvironmentPatternError.TierError
 
                             return {
@@ -487,7 +532,7 @@ module EnvironmentPattern =
                                 Number = ExactNumber (Numberless)
                                 Space = AnySpace
                             }
-                        | Regex (matchEnvWith MatchAnyTier MatchWithoutNumber MatchExactSpace) [ s ] ->  // *-services
+                        | AnyNoneSpace s ->
                             let! space = Space.parse s <@> EnvironmentPatternError.SpaceError
 
                             return {
@@ -495,7 +540,7 @@ module EnvironmentPattern =
                                 Number = ExactNumber (Numberless)
                                 Space = ExactSpace space
                             }
-                        | Regex (matchEnvWith MatchAnyTier MatchWithoutNumber MatchAnySpace) [] ->  // *-*
+                        | AnyAnyAny ->
                             return {
                                 Tier = AnyTier
                                 Number = ExactNumber (Numberless)
