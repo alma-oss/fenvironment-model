@@ -1,7 +1,7 @@
 namespace Lmc.EnvironmentModel
 
 [<AutoOpen>]
-module private Utils =
+module internal Utils =
     let tee f a =
         f a
         a
@@ -9,7 +9,7 @@ module private Utils =
     let (=>) key value = key, value
 
 [<AutoOpen>]
-module private Regexp =
+module internal Regexp =
     open System.Text.RegularExpressions
 
     // http://www.fssnip.net/29/title/Regular-expression-active-pattern

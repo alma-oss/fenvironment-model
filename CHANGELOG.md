@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- [*Internal*] Simplify `EnvironmentPattern.FullyQualified.parse` function to be easier to parse for Fable
 
 ## 3.2.0 - 2021-02-15
 - Update dependencies
