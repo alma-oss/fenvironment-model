@@ -3,13 +3,11 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../src/Lmc.EnvironmentModel/EnvironmentModel.fsproj">
-      <Name>EnvironmentModel.fsproj</Name>
-    </ProjectReference>
+    <ProjectReference Include="../src/Lmc.EnvironmentModel/EnvironmentModel.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
