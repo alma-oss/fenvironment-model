@@ -1,6 +1,6 @@
-namespace Lmc.EnvironmentModel
+namespace Alma.EnvironmentModel
 
-open Lmc.ErrorHandling
+open Alma.ErrorHandling
 
 //
 // Parse Errors
@@ -36,7 +36,7 @@ type EnvironmentError =
     | AliasError of AliasError
     | ProxyError of ProxyError
     | InvalidFormat
-    | UnknownProxy of uknown: Proxy * available: string list
+    | UnknownProxy of unknown: Proxy * available: string list
 
 [<RequireQualifiedAccess>]
 module EnvironmentError =
@@ -284,7 +284,7 @@ module private MatchingHelp =
 
 [<RequireQualifiedAccess>]
 module Environment =
-    open Lmc.ErrorHandling.Result.Operators
+    open Alma.ErrorHandling.Result.Operators
 
     [<RequireQualifiedAccess>]
     module FullyQualified =
@@ -400,7 +400,7 @@ and FullyQualifiedEnvironmentPattern = {
 
 [<RequireQualifiedAccess>]
 module EnvironmentPattern =
-    open Lmc.ErrorHandling.Result.Operators
+    open Alma.ErrorHandling.Result.Operators
 
     [<RequireQualifiedAccess>]
     module FullyQualified =

@@ -1,7 +1,7 @@
 module EnvironmentModel.Test.Environment
 
 open Expecto
-open Lmc.EnvironmentModel
+open Alma.EnvironmentModel
 
 let env tier number space: FullyQualifiedEnvironment =
     {
