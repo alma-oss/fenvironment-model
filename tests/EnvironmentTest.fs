@@ -3,6 +3,10 @@ module EnvironmentModel.Test.Environment
 open Expecto
 open Alma.EnvironmentModel
 
+let okOrFail = function
+    | Ok value -> value
+    | Error error -> failwithf "%A" error
+
 let env tier number space: FullyQualifiedEnvironment =
     {
         Tier = tier
@@ -10,13 +14,29 @@ let env tier number space: FullyQualifiedEnvironment =
         Space = space
     }
 
+let awsSpace = AWSAccount >> Space.AWSAccount
+
+let provideAWSSpaces =
+    [
+        "privacycomponents", Ok (Space.AWSAccount (AWSAccount "privacycomponents"))
+        "privacy-components", Ok (Space.AWSAccount (AWSAccount "privacy-components"))
+        "devX", Error (UnknownSpace "devX")
+        "dev", Error (UnknownSpace "dev")
+        "dev*", Error (UnknownSpace "dev*")
+    ]
+
 let provideEnvironments =
     [
+        // Lmc environments
         (env Tier.Prod Numberless Space.Business, Alias "prod")
         (env Tier.Dev (Number 21) Space.Business, Alias "dev21")
         (env Tier.Dev (Number 1) Space.Services, Alias "dev1-services")
         (env Tier.Deploy Numberless Space.Services, Alias "deploy-services")
         (env Tier.Prod Numberless Space.Rad, Alias "prod-rad")
+        // AWS environments
+        (env Tier.Dev (Number 1) (awsSpace "privacycomponents"), Alias "privacycomponents-dev1")
+        (env Tier.Internal Numberless (awsSpace "privacycomponents"), Alias "privacycomponents-int")
+        (env Tier.Prod Numberless (awsSpace "privacy-components"), Alias "privacy-components-prod")
     ]
 
 let envPattern tier number space: FullyQualifiedEnvironmentPattern =
@@ -28,6 +48,7 @@ let envPattern tier number space: FullyQualifiedEnvironmentPattern =
 
 let provideEnvironmentPatterns =
     [
+        // Lmc environments
         (envPattern (ExactTier Tier.Dev) (ExactNumber (Number 1)) (ExactSpace Space.Business), "dev1")
         (envPattern (ExactTier Tier.Dev) (ExactNumber (Number 1)) (ExactSpace Space.Services), "dev1-services")
         (envPattern (ExactTier Tier.Prod) (ExactNumber Numberless) (ExactSpace Space.Business), "prod")
@@ -41,6 +62,35 @@ let provideEnvironmentPatterns =
         (envPattern AnyTier (ExactNumber Numberless) AnySpace, "*-*")
         (envPattern AnyTier (ExactNumber (Number 42)) AnySpace, "*42-*")
         (envPattern AnyTier AnyNumber (ExactSpace Space.Business), "*X")
+        // AWS environments
+        (envPattern (ExactTier Tier.Dev) (ExactNumber (Number 1)) (ExactSpace (awsSpace "privacycomponents")), "privacycomponents-dev1")
+        (envPattern (ExactTier Tier.Internal) AnyNumber (ExactSpace (awsSpace "privacycomponents")), "privacycomponents-intX")
+        (envPattern (ExactTier Tier.Prod) AnyNumber (ExactSpace (awsSpace "privacy-components")), "privacy-components-prodX")
+        (envPattern AnyTier (ExactNumber Numberless) (ExactSpace (awsSpace "privacycomponents")), "privacycomponents-*")
+        (envPattern AnyTier AnyNumber (ExactSpace (awsSpace "privacycomponents")), "privacycomponents-*X")
+    ]
+
+[<Tests>]
+let spacesTests =
+    testList "Space" [
+        testCase "parse AWS Space" <| fun _ ->
+            provideAWSSpaces
+            |> List.iter (fun (space, expected) ->
+                Expect.equal (Space.parse space) expected space
+            )
+
+        testCase "match AWS Space" <| fun _ ->
+            provideAWSSpaces
+            |> List.iter (fun (spaceString, expected) ->
+                let expectedSpace = expected |> Result.toOption
+
+                let space =
+                    match spaceString with
+                    | Space.IsAWSAccount account -> Some (Space.AWSAccount account)
+                    | _ -> None
+
+                Expect.equal space expectedSpace spaceString
+            )
     ]
 
 [<Tests>]

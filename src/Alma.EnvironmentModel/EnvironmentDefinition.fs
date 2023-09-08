@@ -80,6 +80,37 @@ module EnvironmentPatternError =
 
 // Exact
 
+type AWSAccount = AWSAccount of string
+
+[<RequireQualifiedAccess>]
+module AWSAccount =
+    let value (AWSAccount account) = account
+
+[<RequireQualifiedAccess>]
+type Tier =
+    | Dev
+    | Devel
+    | Deploy
+    | Internal
+    | Prod
+
+[<RequireQualifiedAccess>]
+module Tier =
+    let value = function
+        | Tier.Dev -> "dev"
+        | Tier.Devel -> "devel"
+        | Tier.Deploy -> "deploy"
+        | Tier.Internal -> "int"
+        | Tier.Prod -> "prod"
+
+    let parse = function
+        | "dev" -> Ok Tier.Dev
+        | "devel" -> Ok Tier.Devel
+        | "deploy" -> Ok Tier.Deploy
+        | "int" -> Ok Tier.Internal
+        | "prod" -> Ok Tier.Prod
+        | tier -> Error (UnknownTier tier)
+
 [<RequireQualifiedAccess>]
 type Space =
     | Business
@@ -88,6 +119,7 @@ type Space =
     | Bi
     | Ict
     | Internal
+    | AWSAccount of AWSAccount
 
 [<RequireQualifiedAccess>]
 module Space =
@@ -98,6 +130,7 @@ module Space =
         | Space.Bi -> "bi"
         | Space.Ict -> "ict"
         | Space.Internal -> "internal"
+        | Space.AWSAccount account -> account |> AWSAccount.value
 
     let format = function
         | Space.Business -> "business"
@@ -106,6 +139,7 @@ module Space =
         | Space.Bi -> "bi"
         | Space.Ict -> "ict"
         | Space.Internal -> "internal"
+        | Space.AWSAccount account -> account |> AWSAccount.value
 
     let parse = function
         | "" | "business" | "-business" -> Ok Space.Business
@@ -114,29 +148,16 @@ module Space =
         | "bi" | "-bi" -> Ok Space.Bi
         | "ict" | "-ict" -> Ok Space.Ict
         | "internal" | "-internal" -> Ok Space.Internal
+        | Regex @"^([a-z]+\-?[a-z]+)$" [ space ] ->
+            match space.TrimEnd('X') |> Tier.parse with
+            | Ok _ -> Error (UnknownSpace space)
+            | _ -> Ok (Space.AWSAccount (AWSAccount space))
+
         | space -> Error (UnknownSpace space)
 
-[<RequireQualifiedAccess>]
-type Tier =
-    | Dev
-    | Devel
-    | Deploy
-    | Prod
-
-[<RequireQualifiedAccess>]
-module Tier =
-    let value = function
-        | Tier.Dev -> "dev"
-        | Tier.Devel -> "devel"
-        | Tier.Deploy -> "deploy"
-        | Tier.Prod -> "prod"
-
-    let parse = function
-        | "dev" -> Ok Tier.Dev
-        | "devel" -> Ok Tier.Devel
-        | "deploy" -> Ok Tier.Deploy
-        | "prod" -> Ok Tier.Prod
-        | tier -> Error (UnknownTier tier)
+    let internal (|IsAWSAccount|_|) = parse >> function
+        | Ok (Space.AWSAccount space) -> Some space
+        | _ -> None
 
 type EnvironmentNumber =
     | Number of int
@@ -192,7 +213,11 @@ module Alias =
     let private aliasForEnvironment tier number space =
         sprintf "%s%s-%s" (tier |> Tier.value) (number |> EnvironmentNumber.value) (space |> Space.value)
 
+    let private aliasForAWSEnvironment tier number (AWSAccount space) =
+        sprintf "%s-%s%s" space (tier |> Tier.value) (number |> EnvironmentNumber.value)
+
     let format = function
+        | tier, number, Space.AWSAccount account -> aliasForAWSEnvironment tier number account
         | tier, number, Space.Business -> aliasForBusinessEnvironment tier number
         | tier, number, space -> aliasForEnvironment tier number space
 
@@ -206,15 +231,20 @@ module Alias =
         let private aliasForEnvironmentPattern tier number space =
             sprintf "%s%s-%s" (tier |> EnvironmentPatternTier.value) (number |> EnvironmentPatternNumber.value) (space |> EnvironmentPatternSpace.value)
 
+        let private aliasForAWSEnvironmentPattern tier number (AWSAccount space) =
+            sprintf "%s-%s%s" space (tier |> EnvironmentPatternTier.value) (number |> EnvironmentPatternNumber.value)
+
         let create = function
             | AnyTier, AnyNumber, AnySpace -> Alias "*"
             | ExactTier tier, ExactNumber number, ExactSpace space -> format (tier, number, space) |> Alias
+            | tier, number, ExactSpace (Space.AWSAccount account) -> aliasForAWSEnvironmentPattern tier number account |> Alias
             | tier, number, ExactSpace Space.Business -> aliasForBusinessEnvironmentPattern tier number |> Alias
             | tier, number, space -> aliasForEnvironmentPattern tier number space |> Alias
 
         let format = function
             | AnyTier, AnyNumber, AnySpace -> "*"
             | ExactTier tier, ExactNumber number, ExactSpace space -> format (tier, number, space)
+            | tier, number, ExactSpace (Space.AWSAccount account) -> aliasForAWSEnvironmentPattern tier number account
             | tier, number, ExactSpace Space.Business -> aliasForBusinessEnvironmentPattern tier number
             | tier, number, space -> aliasForEnvironmentPattern tier number space
 
@@ -277,10 +307,24 @@ module private MatchingHelp =
             | MatchAnyNumber -> @"X"
         let spacePart =
             match space with
-            | MatchExactSpace -> @"(-[a-z]*)?"
-            | MatchAnySpace -> @"(?>-\*)?"  // match but not capture
+            | MatchExactSpace -> @"(\-[a-z]*)?"
+            | MatchAnySpace -> @"(?>\-\*)?"  // match but not capture
 
         sprintf @"^%s%s%s$" tierPart numberPart spacePart
+
+    let matchAWSEnvWith tier number =
+        let spacePart = @"([a-z]+\-?[a-z]+)"
+        let tierPart =
+            match tier with
+            | MatchExactTier -> @"\-([a-z]+){1}"
+            | MatchAnyTier -> @"\-\*"
+        let numberPart =
+            match number with
+            | MatchExactNumber -> @"(\d+){1}"
+            | MatchWithoutNumber -> @"(?!\d+)"
+            | MatchAnyNumber -> @"X"
+
+        sprintf @"^%s%s%s$" spacePart tierPart numberPart
 
 [<RequireQualifiedAccess>]
 module Environment =
@@ -296,6 +340,22 @@ module Environment =
         let parse: string -> Result<FullyQualifiedEnvironment, EnvironmentError> =
             fun alias -> result {
                 match alias with
+                | Regex (matchAWSEnvWith MatchExactTier MatchExactNumber) [ Space.IsAWSAccount s; t; n ] ->
+                    let! tier = Tier.parse t <@> EnvironmentError.TierError
+
+                    return {
+                        Number = Number (n |> int)
+                        Tier = tier
+                        Space = Space.AWSAccount s
+                    }
+                | Regex (matchAWSEnvWith MatchExactTier MatchWithoutNumber) [ Space.IsAWSAccount s; t ] ->
+                    let! tier = Tier.parse t <@> EnvironmentError.TierError
+
+                    return {
+                        Number = Numberless
+                        Tier = tier
+                        Space = Space.AWSAccount s
+                    }
                 | Regex (matchEnvWith MatchExactTier MatchExactNumber MatchExactSpace) [ t; n; s ] ->
                     let! space = Space.parse s <@> EnvironmentError.SpaceError
                     let! tier = Tier.parse t <@> EnvironmentError.TierError
@@ -454,6 +514,31 @@ module EnvironmentPattern =
             | Regex (matchEnvWith MatchAnyTier MatchWithoutNumber MatchExactSpace) [ s ] -> Some s
             | _ -> None
 
+        /// Example: privacycomponents-*X
+        let private (|AWSSpaceAnyAny|_|) = function
+            | Regex (matchAWSEnvWith MatchAnyTier MatchAnyNumber) [ Space.IsAWSAccount s ] -> Some s
+            | _ -> None
+
+        /// Example: privacycomponents-*
+        let private (|AWSSpaceAnyNone|_|) = function
+            | Regex (matchAWSEnvWith MatchAnyTier MatchWithoutNumber) [ Space.IsAWSAccount s ] -> Some s
+            | _ -> None
+
+        /// Example: privacycomponents-int
+        let private (|AWSSpaceTierNone|_|) = function
+            | Regex (matchAWSEnvWith MatchExactTier MatchWithoutNumber) [ Space.IsAWSAccount s; t ] -> Some (s, t)
+            | _ -> None
+
+        /// Example: privacycomponents-devX
+        let private (|AWSSpaceTierAny|_|) = function
+            | Regex (matchAWSEnvWith MatchExactTier MatchAnyNumber) [ Space.IsAWSAccount s; t ] -> Some (s, t)
+            | _ -> None
+
+        /// Example: privacycomponents-dev1
+        let private (|AWSSpaceTierNumber|_|) = function
+            | Regex (matchAWSEnvWith MatchExactTier MatchExactNumber) [ Space.IsAWSAccount s; t; n ] -> Some (s, t, n)
+            | _ -> None
+
         /// Example: \*-*
         let private (|AnyAnyAny|_|) = function
             | Regex (matchEnvWith MatchAnyTier MatchWithoutNumber MatchAnySpace) [] -> Some AnyAnyAny
@@ -476,6 +561,42 @@ module EnvironmentPattern =
                                 Tier = AnyTier
                                 Number = AnyNumber
                                 Space = AnySpace
+                            }
+                        | AWSSpaceAnyAny s ->
+                            return {
+                                Tier = AnyTier
+                                Number = AnyNumber
+                                Space = ExactSpace (Space.AWSAccount s)
+                            }
+                        | AWSSpaceAnyNone s ->
+                            return {
+                                Tier = AnyTier
+                                Number = (ExactNumber Numberless)
+                                Space = ExactSpace (Space.AWSAccount s)
+                            }
+                        | AWSSpaceTierAny (s, t) ->
+                            let! tier = Tier.parse t <@> EnvironmentPatternError.TierError
+
+                            return {
+                                Tier = ExactTier tier
+                                Number = AnyNumber
+                                Space = ExactSpace (Space.AWSAccount s)
+                            }
+                        | AWSSpaceTierNone (s, t) ->
+                            let! tier = Tier.parse t <@> EnvironmentPatternError.TierError
+
+                            return {
+                                Tier = ExactTier tier
+                                Number = AnyNumber
+                                Space = ExactSpace (Space.AWSAccount s)
+                            }
+                        | AWSSpaceTierNumber (s, t, n) ->
+                            let! tier = Tier.parse t <@> EnvironmentPatternError.TierError
+
+                            return {
+                                Tier = ExactTier tier
+                                Number = ExactNumber (Number (n |> int))
+                                Space = ExactSpace (Space.AWSAccount s)
                             }
                         | TierAnySpace (t, s) ->
                             let! space = Space.parse s <@> EnvironmentPatternError.SpaceError
