@@ -1,4 +1,4 @@
-namespace Lmc.EnvironmentModel
+namespace Alma.EnvironmentModel
 
 [<AutoOpen>]
 module ProxyModule =
