@@ -2,11 +2,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Library</OutputType>
     <PackageId>Alma.EnvironmentModel</PackageId>
     <Version>6.1.0</Version>
-    <RepositoryUrl>https://github.com/almacareer/prc-fenvironment-model</RepositoryUrl>
+    <RepositoryUrl>https://github.com/almacareer/prc-fenvironment-model.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/almacareer/prc-fenvironment-model</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
