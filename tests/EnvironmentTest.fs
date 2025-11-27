@@ -28,14 +28,14 @@ let provideAWSSpaces =
 let provideEnvironments =
     [
         // Lmc environments
-        (env Tier.Prod Numberless Space.Business, Alias "prod")
-        (env Tier.Dev (Number 21) Space.Business, Alias "dev21")
-        (env Tier.Dev (Number 1) Space.Services, Alias "dev1-services")
-        (env Tier.Deploy Numberless Space.Services, Alias "deploy-services")
-        (env Tier.Prod Numberless Space.Rad, Alias "prod-rad")
+        (env Tier.Prod Numberless (Space.Space ""), Alias "prod")
+        (env Tier.Dev (Number 21) (Space.Space ""), Alias "dev21")
+        (env Tier.Dev (Number 1) (Space.Space "services"), Alias "dev1-services")
+        (env Tier.Deploy Numberless (Space.Space "services"), Alias "deploy-services")
+        (env Tier.Prod Numberless (Space.Space "rad"), Alias "prod-rad")
         // AWS environments
         (env Tier.Dev (Number 1) (awsSpace "privacycomponents"), Alias "privacycomponents-dev1")
-        (env Tier.Internal Numberless (awsSpace "privacycomponents"), Alias "privacycomponents-int")
+        (env Tier.Integration Numberless (awsSpace "privacycomponents"), Alias "privacycomponents-int")
         (env Tier.Prod Numberless (awsSpace "privacy-components"), Alias "privacy-components-prod")
     ]
 
@@ -49,22 +49,22 @@ let envPattern tier number space: FullyQualifiedEnvironmentPattern =
 let provideEnvironmentPatterns =
     [
         // Lmc environments
-        (envPattern (ExactTier Tier.Dev) (ExactNumber (Number 1)) (ExactSpace Space.Business), "dev1")
-        (envPattern (ExactTier Tier.Dev) (ExactNumber (Number 1)) (ExactSpace Space.Services), "dev1-services")
-        (envPattern (ExactTier Tier.Prod) (ExactNumber Numberless) (ExactSpace Space.Business), "prod")
-        (envPattern (ExactTier Tier.Prod) (ExactNumber Numberless) (ExactSpace Space.Services), "prod-services")
-        (envPattern (ExactTier Tier.Dev) AnyNumber (ExactSpace Space.Business), "devX")
-        (envPattern (ExactTier Tier.Devel) AnyNumber (ExactSpace Space.Rad), "develX-rad")
+        (envPattern (ExactTier Tier.Dev) (ExactNumber (Number 1)) (ExactSpace (Space.Space "")), "dev1")
+        (envPattern (ExactTier Tier.Dev) (ExactNumber (Number 1)) (ExactSpace (Space.Space "services")), "dev1-services")
+        (envPattern (ExactTier Tier.Prod) (ExactNumber Numberless) (ExactSpace (Space.Space "")), "prod")
+        (envPattern (ExactTier Tier.Prod) (ExactNumber Numberless) (ExactSpace (Space.Space "services")), "prod-services")
+        (envPattern (ExactTier Tier.Dev) AnyNumber (ExactSpace (Space.Space "")), "devX")
+        (envPattern (ExactTier Tier.Devel) AnyNumber (ExactSpace (Space.Space "rad")), "develX-rad")
         (envPattern AnyTier AnyNumber AnySpace, "*")
         (envPattern (ExactTier Tier.Dev) AnyNumber AnySpace, "devX-*")
         (envPattern (ExactTier Tier.Dev) (ExactNumber Numberless) AnySpace, "dev-*")
-        (envPattern AnyTier AnyNumber (ExactSpace Space.Business), "*X")
+        (envPattern AnyTier AnyNumber (ExactSpace (Space.Space "")), "*X")
         (envPattern AnyTier (ExactNumber Numberless) AnySpace, "*-*")
         (envPattern AnyTier (ExactNumber (Number 42)) AnySpace, "*42-*")
-        (envPattern AnyTier AnyNumber (ExactSpace Space.Business), "*X")
+        (envPattern AnyTier AnyNumber (ExactSpace (Space.Space "")), "*X")
         // AWS environments
         (envPattern (ExactTier Tier.Dev) (ExactNumber (Number 1)) (ExactSpace (awsSpace "privacycomponents")), "privacycomponents-dev1")
-        (envPattern (ExactTier Tier.Internal) AnyNumber (ExactSpace (awsSpace "privacycomponents")), "privacycomponents-intX")
+        (envPattern (ExactTier Tier.Integration) AnyNumber (ExactSpace (awsSpace "privacycomponents")), "privacycomponents-intX")
         (envPattern (ExactTier Tier.Prod) AnyNumber (ExactSpace (awsSpace "privacy-components")), "privacy-components-prodX")
         (envPattern AnyTier (ExactNumber Numberless) (ExactSpace (awsSpace "privacycomponents")), "privacycomponents-*")
         (envPattern AnyTier AnyNumber (ExactSpace (awsSpace "privacycomponents")), "privacycomponents-*X")
