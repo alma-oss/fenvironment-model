@@ -1,15 +1,14 @@
 RESTRICTION: == net9.0
 NUGET
-  remote: https://nuget.pkg.github.com/almacareer/index.json
-    Alma.ErrorHandling (10.0.0)
-      FSharp.Core (>= 9.0.201 < 10.0)
-    Alma.ServiceIdentification (10.0.0)
-      FSharp.Core (>= 9.0.201 < 10.0)
   remote: https://api.nuget.org/v3/index.json
+    Alma.ServiceIdentification (10.1)
+      FSharp.Core (>= 9.0.201 < 10.0)
     Expecto (10.2.2)
       FSharp.Core (>= 7.0.200)
       Mono.Cecil (>= 0.11.4 < 1.0)
-    FSharp.Core (9.0.201)
+    Feather.ErrorHandling (1.0)
+      FSharp.Core (>= 9.0.201 < 10.0)
+    FSharp.Core (9.0.303)
     Microsoft.ApplicationInsights (2.23)
       System.Diagnostics.DiagnosticSource (>= 5.0)
     Microsoft.Testing.Extensions.Telemetry (1.6.2)

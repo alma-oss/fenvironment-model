@@ -1,22 +1,13 @@
 Environment Model
 =================
 
+[![NuGet](https://img.shields.io/nuget/v/Alma.EnvironmentModel.svg)](https://www.nuget.org/packages/Alma.EnvironmentModel)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Alma.EnvironmentModel.svg)](https://www.nuget.org/packages/Alma.EnvironmentModel)
+[![Tests](https://github.com/alma-oss/fenvironment-model/actions/workflows/tests.yaml/badge.svg)](https://github.com/alma-oss/fenvironment-model/actions/workflows/tests.yaml)
+
 > Library which contains a Model types and basic modules for Environment Definition and Deployment.
 
 ## Install
-
-Add following into `paket.dependencies`
-```
-source https://nuget.pkg.github.com/almacareer/index.json username: "%PRIVATE_FEED_USER%" password: "%PRIVATE_FEED_PASS%"
-# LMC Nuget dependencies:
-nuget Alma.EnvironmentModel
-```
-
-NOTE: For local development, you have to create ENV variables with your github personal access token.
-```sh
-export PRIVATE_FEED_USER='{GITHUB USERNANME}'
-export PRIVATE_FEED_PASS='{TOKEN}'	# with permissions: read:packages
-```
 
 Add following into `paket.references`
 ```

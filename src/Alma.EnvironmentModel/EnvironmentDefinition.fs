@@ -1,6 +1,6 @@
 namespace Alma.EnvironmentModel
 
-open Alma.ErrorHandling
+open Feather.ErrorHandling
 
 //
 // Parse Errors
@@ -314,7 +314,7 @@ module private MatchingHelp =
 
 [<RequireQualifiedAccess>]
 module Environment =
-    open Alma.ErrorHandling.Result.Operators
+    open Feather.ErrorHandling.Result.Operators
 
     [<RequireQualifiedAccess>]
     module FullyQualified =
@@ -446,7 +446,7 @@ and FullyQualifiedEnvironmentPattern = {
 
 [<RequireQualifiedAccess>]
 module EnvironmentPattern =
-    open Alma.ErrorHandling.Result.Operators
+    open Feather.ErrorHandling.Result.Operators
 
     [<RequireQualifiedAccess>]
     module FullyQualified =
