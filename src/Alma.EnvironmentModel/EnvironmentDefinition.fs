@@ -91,7 +91,7 @@ type Tier =
     | Dev
     | Devel
     | Deploy
-    | Internal
+    | Integration
     | Prod
 
 [<RequireQualifiedAccess>]
@@ -100,54 +100,40 @@ module Tier =
         | Tier.Dev -> "dev"
         | Tier.Devel -> "devel"
         | Tier.Deploy -> "deploy"
-        | Tier.Internal -> "int"
+        | Tier.Integration -> "int"
         | Tier.Prod -> "prod"
 
     let parse = function
         | "dev" -> Ok Tier.Dev
         | "devel" -> Ok Tier.Devel
         | "deploy" -> Ok Tier.Deploy
-        | "int" -> Ok Tier.Internal
+        | "int" -> Ok Tier.Integration
         | "prod" -> Ok Tier.Prod
         | tier -> Error (UnknownTier tier)
 
 [<RequireQualifiedAccess>]
 type Space =
-    | Business
-    | Services
-    | Rad
-    | Bi
-    | Ict
-    | Internal
+    | Space of string
     | AWSAccount of AWSAccount
 
 [<RequireQualifiedAccess>]
 module Space =
     let value = function
-        | Space.Business -> ""
-        | Space.Services -> "services"
-        | Space.Rad -> "rad"
-        | Space.Bi -> "bi"
-        | Space.Ict -> "ict"
-        | Space.Internal -> "internal"
+        | Space.Space s -> s
         | Space.AWSAccount account -> account |> AWSAccount.value
 
     let format = function
-        | Space.Business -> "business"
-        | Space.Services -> "services"
-        | Space.Rad -> "rad"
-        | Space.Bi -> "bi"
-        | Space.Ict -> "ict"
-        | Space.Internal -> "internal"
+        | Space.Space "" -> "business"
+        | Space.Space s -> s
         | Space.AWSAccount account -> account |> AWSAccount.value
 
     let parse = function
-        | "" | "business" | "-business" -> Ok Space.Business
-        | "services" | "-services" -> Ok Space.Services
-        | "rad" | "-rad" -> Ok Space.Rad
-        | "bi" | "-bi" -> Ok Space.Bi
-        | "ict" | "-ict" -> Ok Space.Ict
-        | "internal" | "-internal" -> Ok Space.Internal
+        | "" | "business" | "-business" -> Ok (Space.Space "")
+        | "services" | "-services" -> Ok (Space.Space "services")
+        | "rad" | "-rad" -> Ok (Space.Space "rad")
+        | "bi" | "-bi" -> Ok (Space.Space "bi")
+        | "ict" | "-ict" -> Ok (Space.Space "ict")
+        | "internal" | "-internal" -> Ok (Space.Space "internal")
         | Regex @"^([a-z]+\-?[a-z]+)$" [ space ] ->
             match space.TrimEnd('X') |> Tier.parse with
             | Ok _ -> Error (UnknownSpace space)
@@ -218,7 +204,7 @@ module Alias =
 
     let format = function
         | tier, number, Space.AWSAccount account -> aliasForAWSEnvironment tier number account
-        | tier, number, Space.Business -> aliasForBusinessEnvironment tier number
+        | tier, number, Space.Space "" -> aliasForBusinessEnvironment tier number
         | tier, number, space -> aliasForEnvironment tier number space
 
     let value (Alias alias) = alias
@@ -238,14 +224,14 @@ module Alias =
             | AnyTier, AnyNumber, AnySpace -> Alias "*"
             | ExactTier tier, ExactNumber number, ExactSpace space -> format (tier, number, space) |> Alias
             | tier, number, ExactSpace (Space.AWSAccount account) -> aliasForAWSEnvironmentPattern tier number account |> Alias
-            | tier, number, ExactSpace Space.Business -> aliasForBusinessEnvironmentPattern tier number |> Alias
+            | tier, number, ExactSpace (Space.Space "") -> aliasForBusinessEnvironmentPattern tier number |> Alias
             | tier, number, space -> aliasForEnvironmentPattern tier number space |> Alias
 
         let format = function
             | AnyTier, AnyNumber, AnySpace -> "*"
             | ExactTier tier, ExactNumber number, ExactSpace space -> format (tier, number, space)
             | tier, number, ExactSpace (Space.AWSAccount account) -> aliasForAWSEnvironmentPattern tier number account
-            | tier, number, ExactSpace Space.Business -> aliasForBusinessEnvironmentPattern tier number
+            | tier, number, ExactSpace (Space.Space "") -> aliasForBusinessEnvironmentPattern tier number
             | tier, number, space -> aliasForEnvironmentPattern tier number space
 
 [<RequireQualifiedAccess>]

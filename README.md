@@ -31,7 +31,7 @@ Alma.EnvironmentModel
 - dev
 - devel
 - deploy
-- int (*internal*)
+- int (*integration*)
 - prod
 
 ### Number
@@ -39,10 +39,7 @@ Alma.EnvironmentModel
 - without number
 
 ### Space
-- business (same as empty)
-- rad
-- bi
-- services
+- lowercased string, such as "services" (empty "" is considered a business/default space)
 - AWS Account (a string - lowercased and could contain a - in the middle)
 
 ---
@@ -53,7 +50,7 @@ Alma.EnvironmentModel
 - dev
 - devel
 - deploy
-- int (*internal*)
+- int (*integration*)
 - prod
 - `*` (_any_)
 
@@ -63,10 +60,7 @@ Alma.EnvironmentModel
 - `X` (_any_)
 
 ### Space
-- business (same as empty)
-- rad
-- bi
-- services
+- lowercased string, such as "services" (empty "" is considered a business/default space)
 - AWS Account (a string - lowercased and could contain a - in the middle)
 - `*` (_any_)
 

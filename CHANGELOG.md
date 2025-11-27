@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- [**BC**] Rename `Tier.Internal` to `Tier.Integration`
+- [**BC**] Remove specific Spaces
 
 ## 8.1.0 - 2025-03-17
 - Update dependencies
