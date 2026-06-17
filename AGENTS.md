@@ -1,5 +1,7 @@
 # AGENTS.md — Alma.EnvironmentModel
 
+This repo ships Agent Skill for the `Alma.EnvironmentModel` library. Compatible agents discover it automatically; see `.agents/skills/fenvironment-model/SKILL.md`.
+
 ## Project Purpose
 
 F# library containing model types and modules for environment definition and deployment. Defines environment tiers (dev, devel, deploy, int, prod), numbering, spaces (including AWS accounts), and pattern matching for environment selectors. Also usable in Fable (F#→JavaScript) projects. Published as NuGet package `Alma.EnvironmentModel`.
