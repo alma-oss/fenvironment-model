@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Alma.EnvironmentModel/EnvironmentModel.fsproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/tests.fsproj" />
+  </Folder>
+</Solution>

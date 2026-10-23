@@ -21,6 +21,7 @@
     <Compile Include="Utils.fs" />
     <Compile Include="Proxy.fs" />
     <Compile Include="EnvironmentDefinition.fs" />
+    <Compile Include="SoftwareComponent.fs" />
   </ItemGroup>
 
   <ItemGroup>
