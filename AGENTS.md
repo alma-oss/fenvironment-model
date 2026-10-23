@@ -45,6 +45,7 @@ fenvironment-model/
 │       ├── Utils.fs                  # Internal utilities
 │       ├── Proxy.fs                  # Proxy types
 │       ├── EnvironmentDefinition.fs  # Core environment model (tiers, numbers, spaces, patterns)
+│       ├── SoftwareComponent.fs      # Instance deployed in an environment (`instance@environment`)
 │       └── paket.references          # FSharp.Core, Feather.ErrorHandling, Alma.ServiceIdentification
 ├── tests/
 │   └── tests.fsproj                  # Expecto test project

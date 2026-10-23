@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <Compile Include="EnvironmentTest.fs" />
+    <Compile Include="SoftwareComponentTest.fs" />
     <Compile Include="Tests.fs" />
   </ItemGroup>
 

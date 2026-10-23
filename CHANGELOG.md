@@ -2,6 +2,7 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+- Add `SoftwareComponent` type and module (`instance@environment`, typed `AC:` / `SS:` / `ST:` or untyped) with `SoftwareComponentError`
 
 ## 10.0.0 - 2026-01-28
 - [**BC**] Use net10.0

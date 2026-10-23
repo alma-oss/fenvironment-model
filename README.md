@@ -75,6 +75,21 @@ Lets have only these environments:
 
 NOTE: There currently is not a pattern for matching AWS environments without specifying an exact space.
 
+## Software Component
+A software component is an `Instance` (from `Alma.ServiceIdentification`) deployed in an `Environment`, written `instance@environment`, for example `alma-userManager-account-v1@dev1-services`. It may carry its concept type as a prefix: `AC:` (application component), `SS:` (system software), `ST:` (storage); without a prefix it is `Untyped`.
+
+```fsharp
+open Alma.EnvironmentModel
+
+let component = SoftwareComponent.parse "-" "AC:alma-userManager-account-v1@dev1-services"
+// Ok (ApplicationComponent (instance, environment))
+
+component |> Result.map SoftwareComponent.value             // Ok "alma-userManager-account-v1@dev1-services"
+component |> Result.map (SoftwareComponent.serialize "-")   // Ok "AC:alma-userManager-account-v1@dev1-services"
+```
+
+`parse` returns a `SoftwareComponentError` (`InvalidFormat`, `InstanceError`, `EnvironmentError`), formatted by `SoftwareComponentError.format`.
+
 ## Release
 1. Increment version in `EnvironmentModel.fsproj`
 2. Update `CHANGELOG.md`
