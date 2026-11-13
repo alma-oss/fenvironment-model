@@ -1,0 +1,113 @@
+lockfile_version: '1'
+dependencies: []
+deployments:
+- kind: project-relative
+  target: claude
+  value: .claude/skills/fenvironment-model
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/fenvironment-model/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:f4c286f7b51db7cbb844961c4ee45dccef9710f3273b2b8fe75c937cfbc5e7a6
+- kind: project-relative
+  target: claude
+  value: .claude/skills/fenvironment-model/references/anti-patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:cae8f38a019427c5a592d6b9bcd76c154df4792ded289cb088a75274970b4ae0
+- kind: project-relative
+  target: claude
+  value: .claude/skills/fenvironment-model/references/examples.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:67a49130ba5008123a6a5029325f6ffe73d7f8faf84da8a8754c0103b9055f00
+- kind: project-relative
+  target: claude
+  value: .claude/skills/fenvironment-model/references/preferred-patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:75dbcf231ead884caeecbad8fd5841cbecaf58939d68410008db93c07325cc84
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/fenvironment-model
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/fenvironment-model/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:f4c286f7b51db7cbb844961c4ee45dccef9710f3273b2b8fe75c937cfbc5e7a6
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/fenvironment-model/references/anti-patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:cae8f38a019427c5a592d6b9bcd76c154df4792ded289cb088a75274970b4ae0
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/fenvironment-model/references/examples.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:67a49130ba5008123a6a5029325f6ffe73d7f8faf84da8a8754c0103b9055f00
+- kind: project-relative
+  target: legacy
+  value: .agents/skills/fenvironment-model/references/preferred-patterns.md
+  runtime: null
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: sha256:75dbcf231ead884caeecbad8fd5841cbecaf58939d68410008db93c07325cc84
+local_deployed_files:
+- .agents/skills/fenvironment-model
+- .agents/skills/fenvironment-model/SKILL.md
+- .agents/skills/fenvironment-model/references/anti-patterns.md
+- .agents/skills/fenvironment-model/references/examples.md
+- .agents/skills/fenvironment-model/references/preferred-patterns.md
+- .claude/skills/fenvironment-model
+- .claude/skills/fenvironment-model/SKILL.md
+- .claude/skills/fenvironment-model/references/anti-patterns.md
+- .claude/skills/fenvironment-model/references/examples.md
+- .claude/skills/fenvironment-model/references/preferred-patterns.md
+local_deployed_file_hashes:
+  .agents/skills/fenvironment-model/SKILL.md: sha256:f4c286f7b51db7cbb844961c4ee45dccef9710f3273b2b8fe75c937cfbc5e7a6
+  .agents/skills/fenvironment-model/references/anti-patterns.md: sha256:cae8f38a019427c5a592d6b9bcd76c154df4792ded289cb088a75274970b4ae0
+  .agents/skills/fenvironment-model/references/examples.md: sha256:67a49130ba5008123a6a5029325f6ffe73d7f8faf84da8a8754c0103b9055f00
+  .agents/skills/fenvironment-model/references/preferred-patterns.md: sha256:75dbcf231ead884caeecbad8fd5841cbecaf58939d68410008db93c07325cc84
+  .claude/skills/fenvironment-model/SKILL.md: sha256:f4c286f7b51db7cbb844961c4ee45dccef9710f3273b2b8fe75c937cfbc5e7a6
+  .claude/skills/fenvironment-model/references/anti-patterns.md: sha256:cae8f38a019427c5a592d6b9bcd76c154df4792ded289cb088a75274970b4ae0
+  .claude/skills/fenvironment-model/references/examples.md: sha256:67a49130ba5008123a6a5029325f6ffe73d7f8faf84da8a8754c0103b9055f00
+  .claude/skills/fenvironment-model/references/preferred-patterns.md: sha256:75dbcf231ead884caeecbad8fd5841cbecaf58939d68410008db93c07325cc84
